@@ -26,6 +26,9 @@ using System.Threading;
 using App5;
 using Windows.Storage;
 using Windows.Foundation.Metadata;
+using Windows.Networking.Connectivity;
+using Microsoft.Toolkit.Uwp.Notifications;
+using System.Net.NetworkInformation;
 
 
 
@@ -97,12 +100,60 @@ namespace App4
         #endregion Campos
 
         #region Constructor Main Page
+        private async void cambioConection(object sender)
+        {
+            bool conectividad = HayConectividad.Conectividad();
+            
+            if (conectividad)
+            {
+                await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () =>{
+
+                    btnIniciarStream.IsEnabled = true;
+                    Notificaciones.MostrarNotificacion("Se recuperó la conexión");
+                });
+                
+            }
+            else
+            {
+                await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () => {
+
+                    btnIniciarStream.IsEnabled = false;
+                    Notificaciones.MostrarNotificacion("Se perdió la conexión");
+                });
+            }
+           
+        }
         public MainPage()
         {
 
             ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             localSettings.Values["valorIdGroup"] = "1";
             this.InitializeComponent();
+            NetworkInformation.NetworkStatusChanged += cambioConection;
+
+
+            //var statusWWMA = NetworkInterface.GetAllNetworkInterfaces();
+            //foreach (var item in statusWWMA)
+            //{
+            //    var interfaceNetwork = item.Description;
+            //}
+
+            if (HayConectividad.Conectividad())
+            {
+                this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () => {
+
+                    btnIniciarStream.IsEnabled = true;
+                });
+            }
+            else
+            {
+                this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () => {
+
+                    btnIniciarStream.IsEnabled = false;
+                });
+            }
+
+
             listaCaras.ItemsSource = listCaras;
             if (localSettings.Values["apiKey"] as string =="")
             {

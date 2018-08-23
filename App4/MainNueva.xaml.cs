@@ -30,7 +30,7 @@ namespace App5
         public MainNueva()
         {
             this.InitializeComponent();
-
+           
 
             ContentFrame.Navigate(typeof(HomePage));
             Windows.Storage.ApplicationDataContainer localSettings =
@@ -44,8 +44,6 @@ namespace App5
 
 
         }
-
-
 
 
 

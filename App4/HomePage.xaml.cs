@@ -14,6 +14,9 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using App5;
 using App4;
+using Microsoft.Toolkit.Uwp.Notifications;
+using Windows.UI.Notifications;
+using Windows.Data.Xml.Dom;
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace App5
@@ -34,9 +37,8 @@ namespace App5
 
         }
 
-        private void btnTest_Click(object sender, RoutedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(Altas));
         }
     }
 }

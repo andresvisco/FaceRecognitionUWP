@@ -11,5 +11,6 @@
     <Grid>
         <TextBlock HorizontalAlignment="Left" Style="{StaticResource EstiloTest}" TextWrapping="Wrap" x:Name="txtHome" Height="36" Margin="10,10,0,0" VerticalAlignment="Top" Width="777" SelectionChanged="RichTextBlock_SelectionChanged" FontSize="24"><Run Text="Producto Face Recognition"/><LineBreak/><LineBreak/><Run/><LineBreak/><Run/></TextBlock>
         <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" x:Name="txtHome_Copy" Height="279" Margin="10,48,0,0" VerticalAlignment="Top" Width="777" SelectionChanged="RichTextBlock_SelectionChanged" FontSize="24"><Run Text="APIs Ocupadas:"/><LineBreak/><Run Text="Azure Cognitive Services - FACE API"/><LineBreak/><Run/><LineBreak/><Run Text="Características:"/><LineBreak/><Run Text="El producto permite detectar la identidad de personas que pasan frente a la cámara"/><Run Text=". El modelo de identificación es asincrónico por lo cual, no es necesario que el individuo permanezca mas de 2 segundos frente a la misma."/><LineBreak/><Run/><LineBreak/><LineBreak/><Run/><LineBreak/><Run/></TextBlock>
+        <Button Content="Button" HorizontalAlignment="Left" Margin="254,340,0,0" VerticalAlignment="Top" Click="Button_Click"/>
     </Grid> 
 </Page>

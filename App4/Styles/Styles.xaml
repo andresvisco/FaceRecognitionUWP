@@ -129,9 +129,7 @@
         <Setter Property="FontWeight" Value="Normal"/>
         <Setter Property="Margin" Value="0,0,0,10"/>
         <Setter Property="FontFamily" Value="Arial"/>
-        <Setter Property="Foreground" Value="Blue"/>
-        
-        
+        <Setter Property="Foreground" Value="BlueViolet"/>
     </Style>
 
     <Style x:Key="TagLineTextStyle" TargetType="TextBlock">
