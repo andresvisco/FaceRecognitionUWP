@@ -10,13 +10,31 @@
 
     
     <Grid>
-        <NavigationView IsSettingsVisible="True" 
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{x:Bind navView.CompactModeThresholdWidth}" />
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="navView.PaneDisplayMode" Value="Top"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        
+        <NavigationView Grid.Column="0"
+                        IsSettingsVisible="True" 
                         x:Name="navView"
                         ItemInvoked="navView_ItemInvoked"
                         Loaded="navView_Loaded"
                         BackRequested="navView_BackRequested"
-                        PaneClosed="navView_PaneClosed"                        
-                        PaneOpened="navView_PaneOpened"
+                        IsPaneOpen="True"
+                        PaneTitle="Face Recognition"
+                        
+                        
+
                         >
             <NavigationView.MenuItems>
               
@@ -32,15 +50,14 @@
                 
                 
             </NavigationView.MenuItems>
-
+            <Frame x:Name="ContentFrame" Grid.Column="1" Margin="24,0,0,0" Width="900" VerticalAlignment="Top" HorizontalAlignment="Left">
+                <Frame.ContentTransitions>
+                    <TransitionCollection>
+                        <NavigationThemeTransition/>
+                    </TransitionCollection>
+                </Frame.ContentTransitions>
+            </Frame>
         </NavigationView>
-        <Button Visibility="Collapsed" x:Name="check" Content="chequear" Click="check_Click"></Button>
-        <Frame x:Name="ContentFrame" Margin="350,0,0,0" Width="900" VerticalAlignment="Top" HorizontalAlignment="Left">
-            <Frame.ContentTransitions>
-                <TransitionCollection>
-                    <NavigationThemeTransition/>
-                </TransitionCollection>
-            </Frame.ContentTransitions>
-        </Frame>
+        
     </Grid>
 </Page>
