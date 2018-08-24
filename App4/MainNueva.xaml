@@ -15,8 +15,8 @@
                         ItemInvoked="navView_ItemInvoked"
                         Loaded="navView_Loaded"
                         BackRequested="navView_BackRequested"
-                        
-                        
+                        PaneClosed="navView_PaneClosed"                        
+                        PaneOpened="navView_PaneOpened"
                         >
             <NavigationView.MenuItems>
               

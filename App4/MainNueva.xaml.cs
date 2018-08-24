@@ -103,5 +103,15 @@ namespace App5
                 navView.IsEnabled = false;
             }
         }
+
+        private void navView_PaneClosed(NavigationView sender, object args)
+        {
+            ContentFrame.Margin = new Thickness(40, 0, 0, 0);
+        }
+
+        private void navView_PaneOpened(NavigationView sender, object args)
+        {
+            ContentFrame.Margin = new Thickness(350, 0, 0, 0);
+        }
     }
 }
