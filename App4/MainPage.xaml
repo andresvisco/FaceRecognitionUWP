@@ -32,7 +32,7 @@
         
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="650"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
             <ColumnDefinition Width="140"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0">
@@ -72,7 +72,6 @@
             <TextBlock Grid.Column="0" Grid.Row="2" Padding="10" HorizontalAlignment="Left" x:Name="txtResult" Width="445" Height="40" FocusVisualPrimaryBrush="#FFC5FF00" VerticalAlignment="Center" Margin="-2,0,0,0"/>
             <TextBlock Grid.Column="0" Grid.Row="3" Padding="10" HorizontalAlignment="Left" x:Name="txtResultServicio" Width="445" Height="40" FocusVisualPrimaryBrush="#FFC5FF00" VerticalAlignment="Center"/>
             <MediaElement HorizontalAlignment="Left" Height="100" Margin="62,198,0,0" Grid.Row="5" VerticalAlignment="Top" Width="100" x:Name="mediaPlayerUWP" />
-            <Image x:Name="imagenCamaraWeb" Width="300" Height="210" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top" Stretch="None" Margin="0,480,0,0"/>
             <Border Visibility="Collapsed" BorderThickness="1" BorderBrush="Black" Grid.ColumnSpan="4" Grid.Row="3" Grid.Column="0">
                 <Image Visibility="Collapsed" x:Name="previewFoto" Grid.ColumnSpan="4" Grid.Row="3" Grid.Column="0" Width="450" Height="450" HorizontalAlignment="Center" Stretch="Uniform"></Image>
             </Border>
@@ -84,7 +83,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="60"></RowDefinition>
                 <RowDefinition Height="300"></RowDefinition>
-                <RowDefinition Height="60"></RowDefinition>
+                <RowDefinition Height="300"></RowDefinition>
             </Grid.RowDefinitions>
             <ListView x:Name="listaCaras" Width="250" Grid.Row="1" Grid.Column="1" Height="300"  >
                 <ListView.ItemTemplate>
@@ -93,6 +92,7 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+            <Image x:Name="imagenCamaraWeb" Width="150" Height="90" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top" Stretch="None" />
 
             <Button Grid.Column="2" Grid.Row="0" Content="Version Video" HorizontalAlignment="Left" Width="140" Margin="0,0,0,0" VerticalAlignment="Top" Click="VersionVideo_Click"/>
         </Grid>

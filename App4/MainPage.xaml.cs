@@ -378,7 +378,7 @@ namespace App4
                             {
                                 if (IdentidadEncontrada == "")
                                 {
-                                    nombre = await ObtenerIdentidad();
+                                    nombre = await ObtenerIdentidad(valor);
 
                                     if (nombre != "" )
                                     {
@@ -463,148 +463,147 @@ namespace App4
             }
         }
 
-        public async Task<string> ObtenerIdentidad()
+        public async Task<string> ObtenerIdentidad( VideoFrame videoFrame)
         {
             byte[] arrayImage;
             var PersonName = "";
+            const BitmapPixelFormat InputPixelFormat1 = BitmapPixelFormat.Bgra8;
 
+            videoFrame = new VideoFrame(InputPixelFormat, (int)this.videoProperties.Width, (int)this.videoProperties.Height);
 
             try
             {
-                const BitmapPixelFormat InputPixelFormat1 = BitmapPixelFormat.Bgra8;
 
-                using (VideoFrame previewFrame = new VideoFrame(InputPixelFormat1, (int)this.videoProperties.Width, (int)this.videoProperties.Height))
+
+
+                var valor = await mediaCapture.GetPreviewFrameAsync(videoFrame);
+
+                SoftwareBitmap softwareBitmapPreviewFrame = valor.SoftwareBitmap;
+
+                Size sizeCrop = new Size(softwareBitmapPreviewFrame.PixelWidth, softwareBitmapPreviewFrame.PixelHeight);
+                Point point = new Point(0, 0);
+                Rect rect = new Rect(0, 0, softwareBitmapPreviewFrame.PixelWidth, softwareBitmapPreviewFrame.PixelHeight);
+                var arrayByteData = await EncodedBytes(softwareBitmapPreviewFrame, BitmapEncoder.BmpEncoderId);
+
+                SoftwareBitmap softwareBitmapCropped = await CreateFromBitmap(softwareBitmapPreviewFrame, (uint)softwareBitmapPreviewFrame.PixelWidth, (uint)softwareBitmapPreviewFrame.PixelHeight);
+                SoftwareBitmap displayableImage = SoftwareBitmap.Convert(softwareBitmapCropped, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
+                //SoftwareBitmap displayableImageGray = SoftwareBitmap.Convert(softwareBitmapCropped, BitmapPixelFormat.Gray16);
+
+
+                //await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, async () => 
+                //{
+                //    var source = new SoftwareBitmapSource();
+                //    await source.SetBitmapAsync(displayableImageGray);
+                //    imagenCamaraWeb.Source = source;
+
+                //});
+                
+
+                arrayImage = await EncodedBytes(displayableImage, BitmapEncoder.BmpEncoderId);
+
+                var nuevoStreamFace = new MemoryStream(arrayImage);
+
+
+                string subscriptionKey = localSettings.Values["apiKey"] as string;
+                string subscriptionEndpoint = "https://southcentralus.api.cognitive.microsoft.com/face/v1.0";
+                var faceServiceClient = new FaceServiceClient(subscriptionKey, subscriptionEndpoint);
+
+                try
                 {
-                    var valor = await this.mediaCapture.GetPreviewFrameAsync(previewFrame);
-                    
-
-                    SoftwareBitmap softwareBitmapPreviewFrame = valor.SoftwareBitmap;
-
-                    Size sizeCrop = new Size(softwareBitmapPreviewFrame.PixelWidth, softwareBitmapPreviewFrame.PixelHeight);
-                    Point point = new Point(0, 0);
-                    Rect rect = new Rect(0, 0, softwareBitmapPreviewFrame.PixelWidth, softwareBitmapPreviewFrame.PixelHeight);
-                    var arrayByteData = await EncodedBytes(softwareBitmapPreviewFrame, BitmapEncoder.BmpEncoderId);
-
-                    SoftwareBitmap softwareBitmapCropped = await CreateFromBitmap(softwareBitmapPreviewFrame, (uint)softwareBitmapPreviewFrame.PixelWidth, (uint)softwareBitmapPreviewFrame.PixelHeight);
-                    SoftwareBitmap displayableImage = SoftwareBitmap.Convert(softwareBitmapCropped, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
-
-                    arrayImage = await EncodedBytes(displayableImage, BitmapEncoder.BmpEncoderId);
-                    var nuevoStreamFace = new MemoryStream(arrayImage);
 
 
+                    // using (var fsStream = File.OpenRead(sampleFile))
+                    // {
+                    IEnumerable<FaceAttributeType> faceAttributes =
+            new FaceAttributeType[] { FaceAttributeType.Gender, FaceAttributeType.Age, FaceAttributeType.Smile, FaceAttributeType.Emotion, FaceAttributeType.Glasses, FaceAttributeType.Hair };
 
-                   
 
+                    var faces = await faceServiceClient.DetectAsync(nuevoStreamFace,true,false,faceAttributes);
 
+                    string edad=string.Empty;
+                    string genero = string.Empty;
+                    string emocion = string.Empty;
+                        
+                    var resultadoIdentifiacion = await faceServiceClient.IdentifyAsync(faces.Select(ff => ff.FaceId).ToArray(), largePersonGroupId: this.GroupId);
 
-                    //var ignored1 = this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                    //{
-                    //    softwareBitmapSource.SetBitmapAsync(displayableImage);
-
-                    //    imagenCamaraWeb.Source = softwareBitmapSource;
-
-                    //});
-
-                    string subscriptionKey = localSettings.Values["apiKey"] as string;
-                    string subscriptionEndpoint = "https://southcentralus.api.cognitive.microsoft.com/face/v1.0";
-                    var faceServiceClient = new FaceServiceClient(subscriptionKey, subscriptionEndpoint);
-
-                    try
+                    var ignored2 = this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                     {
-
-
-                        // using (var fsStream = File.OpenRead(sampleFile))
-                        // {
-                        IEnumerable<FaceAttributeType> faceAttributes =
-                new FaceAttributeType[] { FaceAttributeType.Gender, FaceAttributeType.Age, FaceAttributeType.Smile, FaceAttributeType.Emotion, FaceAttributeType.Glasses, FaceAttributeType.Hair };
-
-
-                        var faces = await faceServiceClient.DetectAsync(nuevoStreamFace,true,false,faceAttributes);
-
-                        string edad=string.Empty;
-                        string genero = string.Empty;
-                        string emocion = string.Empty;
-                        
-                        var resultadoIdentifiacion = await faceServiceClient.IdentifyAsync(faces.Select(ff => ff.FaceId).ToArray(), largePersonGroupId: this.GroupId);
-
-                        var ignored2 = this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                        try
                         {
-                            try
+                            var ignored5 = this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                             {
-                                var ignored5 = this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                                {
-                                    var Status = faces.Length.ToString();
-                                    txtResultServicio.Text = "Caras encontradas: " + Status.ToString();
-                                });
+                                var Status = faces.Length.ToString();
+                                txtResultServicio.Text = "Caras encontradas: " + Status.ToString();
+                            });
 
-                            }
-                            catch (Exception ex)
+                        }
+                        catch (Exception ex)
+                        {
+                            var ignored5 = this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                             {
-                                var ignored5 = this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                                {
-                                    txtResultServicio.Text = "Error 1: " + ex.Message.ToString();
+                                txtResultServicio.Text = "Error 1: " + ex.Message.ToString();
 
-                                });
-                                throw;
+                            });
+                            throw;
 
-                            }
+                        }
 
-                        });
+                    });
                         
 
-                        for (int idx = 0; idx < faces.Length; idx++)
+                    for (int idx = 0; idx < faces.Length; idx++)
+                    {
+                        // Update identification result for rendering
+                        edad = faces[idx].FaceAttributes.Age.ToString();
+                        genero = faces[idx].FaceAttributes.Gender.ToString();
+
+                        if (genero != string.Empty)
                         {
-                            // Update identification result for rendering
-                            edad = faces[idx].FaceAttributes.Age.ToString();
-                            genero = faces[idx].FaceAttributes.Gender.ToString();
-
-                            if (genero != string.Empty)
+                            if (genero == "male")
                             {
-                                if (genero == "male")
-                                {
-                                    genero = "Masculino";
-                                }
-                                else
-                                {
-                                    genero = "Femenino";
-                                }
-                            }
-                            
-
-
-                            var res = resultadoIdentifiacion[idx];
-
-                            if (res.Candidates.Length > 0)
-                            {
-                                var nombrePersona = await faceServiceClient.GetPersonInLargePersonGroupAsync(GroupId, res.Candidates[0].PersonId);
-                                PersonName = nombrePersona.Name.ToString();
-                                //var estadoAnimo = 
-                                var ignored3 = this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                                {
-                                    txtResult.Text = nombrePersona.Name.ToString() + " / " + genero.ToString() + " / " + edad.ToString();
-
-
-                                    previewFoto.Source = softwareBitmapSource;
-
-                                });
+                                genero = "Masculino";
                             }
                             else
                             {
-                                txtResult.Text = "Unknown";
+                                genero = "Femenino";
                             }
                         }
-                        //}
+                            
 
-                    }
-                    catch (Exception ex)
-                    {
-                        var error = ex.Message.ToString();
-                        var ignored3 = this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+
+                        var res = resultadoIdentifiacion[idx];
+
+                        if (res.Candidates.Length > 0)
                         {
-                            txtResultServicio.Text = "Error 2: "+ error;
-                        });
+                            var nombrePersona = await faceServiceClient.GetPersonInLargePersonGroupAsync(GroupId, res.Candidates[0].PersonId);
+                            PersonName = nombrePersona.Name.ToString();
+                            //var estadoAnimo = 
+                            var ignored3 = this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                            {
+                                txtResult.Text = nombrePersona.Name.ToString() + " / " + genero.ToString() + " / " + edad.ToString();
+
+
+                                previewFoto.Source = softwareBitmapSource;
+
+                            });
+                        }
+                        else
+                        {
+                            txtResult.Text = "Unknown";
+                        }
                     }
+                    //}
+
                 }
+                catch (FaceAPIException ex)
+                {
+                    var error = ex.Message.ToString();
+                    var ignored3 = this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    {
+                        txtResultServicio.Text = "Error 2: "+ error;
+                    });
+                }
+                
             }
             catch (Exception ex)
             {
@@ -779,7 +778,7 @@ namespace App4
                 var ancho = width * (0.2);
                 var alto = heigth * (0.2);
 
-
+                
                 encoder.BitmapTransform.ScaledWidth = (uint)ancho;
                 encoder.BitmapTransform.ScaledHeight = (uint)alto;
 
