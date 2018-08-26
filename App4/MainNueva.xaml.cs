@@ -16,6 +16,7 @@ using App4;
 using App5;
 using Windows.Networking.Connectivity;
 using System.Net.NetworkInformation;
+using Microsoft.AppCenter.Analytics;
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace App5
@@ -68,16 +69,18 @@ namespace App5
             switch (item.Tag)
             {
                 case "home":
-                    
+                    Analytics.TrackEvent("Click en " + item.Tag.ToString());
+
                     ContentFrame.Navigate(typeof(HomePage));
                     break;
                 case "reconocimiento":
-                    
+                    Analytics.TrackEvent("Click en " + item.Tag.ToString());
+
                     ContentFrame.Navigate(typeof(MainPage));
                     break;
 
                 case "altas":
-                    
+                    Analytics.TrackEvent("Click en "+item.Tag.ToString());
                     ContentFrame.Navigate(typeof(Altas));
                     break;
              

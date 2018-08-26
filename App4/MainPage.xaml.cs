@@ -27,6 +27,7 @@ using App5;
 using Windows.Storage;
 using Windows.Networking.Connectivity;
 using Windows.ApplicationModel;
+using Microsoft.AppCenter.Analytics;
 
 namespace App4
 {
@@ -193,6 +194,8 @@ namespace App4
         
         private void CameraStreamingButton_Click(object sender, RoutedEventArgs e)
         {
+            Analytics.TrackEvent("Click en IniciarStreamming");
+
             IdentidadEncontrada = "";
             if (this.currentState == ScenarioState.Streaming)
             {
