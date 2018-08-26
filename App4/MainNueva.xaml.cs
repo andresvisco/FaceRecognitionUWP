@@ -72,10 +72,12 @@ namespace App5
                     ContentFrame.Navigate(typeof(HomePage));
                     break;
                 case "reconocimiento":
+                    
                     ContentFrame.Navigate(typeof(MainPage));
                     break;
 
                 case "altas":
+                    
                     ContentFrame.Navigate(typeof(Altas));
                     break;
              

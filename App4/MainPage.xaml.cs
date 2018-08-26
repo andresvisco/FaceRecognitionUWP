@@ -25,24 +25,13 @@ using Windows.UI.Xaml.Navigation;
 using System.Threading;
 using App5;
 using Windows.Storage;
-using Windows.Foundation.Metadata;
 using Windows.Networking.Connectivity;
-using Microsoft.Toolkit.Uwp.Notifications;
-using System.Net.NetworkInformation;
-
-
-
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
+using Windows.ApplicationModel;
 
 namespace App4
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    /// 
-    
 
-    
+
     public sealed partial class MainPage : Page
     {
         Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
@@ -140,14 +129,14 @@ namespace App4
 
             if (HayConectividad.Conectividad())
             {
-                this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () => {
+                Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () => {
 
-                    btnIniciarStream.IsEnabled = true;
+                 btnIniciarStream.IsEnabled = true;
                 });
             }
             else
             {
-                this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () => {
+                Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () => {
 
                     btnIniciarStream.IsEnabled = false;
                 });
@@ -168,10 +157,21 @@ namespace App4
             btnTomarFoto.IsEnabled = false;
             this.currentState = ScenarioState.Idle;
             App.Current.Suspending += this.OnSuspending;
+            
+            App.Current.LeavingBackground += apagarCamara;
+            
 
 
 
 
+        }
+     
+
+
+
+        public async void apagarCamara(object sender, LeavingBackgroundEventArgs e)
+        {
+            ShutdownWebCam();
 
         }
         #endregion Constructor
@@ -277,7 +277,8 @@ namespace App4
                 }
             }
         }
-        private async void ShutdownWebCam()
+
+        public async void ShutdownWebCam()
         {
             if (this.frameProcessingTimer != null)
             {

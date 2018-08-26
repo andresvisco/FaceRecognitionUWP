@@ -16,6 +16,8 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using App4;
 using App5;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
 
 namespace App4
 {
@@ -30,6 +32,7 @@ namespace App4
         /// </summary>
         public App()
         {
+            AppCenter.Start("346867b7-2f47-4fa8-8f3c-b1b16b121b5d", typeof(Analytics));
             this.InitializeComponent();
             this.Suspending += OnSuspending;
         }
