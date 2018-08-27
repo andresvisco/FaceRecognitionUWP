@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" xmlns:uap6="http://schemas.microsoft.com/appx/manifest/uap/windows10/6" IgnorableNamespaces="uap mp uap3 uap6">
-  <Identity Name="144a6863-7a64-4de8-bdce-c6bd8d74a47d" Publisher="CN=andres.visco" Version="1.7.9.0" />
-  <mp:PhoneIdentity PhoneProductId="144a6863-7a64-4de8-bdce-c6bd8d74a47d" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
+  <Identity Name="200AndresViscoBonomo.FaceRecognitionUWP" Publisher="CN=8FE1F081-56CC-49CF-904B-FA8A48AAA8E8" Version="1.1.5.0" />
+  <mp:PhoneIdentity PhoneProductId="6a860c43-14e1-4629-ab1c-db6bdb131332" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
-    <DisplayName>App4</DisplayName>
-    <PublisherDisplayName>andres.visco</PublisherDisplayName>
+    <DisplayName>Face Recognition UWP</DisplayName>
+    <PublisherDisplayName>Andres Visco Bonomo</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>
@@ -19,6 +19,10 @@
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\Square71x71Logo.jpg">
         </uap:DefaultTile>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
+        <uap:InitialRotationPreference>
+          <uap:Rotation Preference="portrait" />
+          <uap:Rotation Preference="landscape" />
+        </uap:InitialRotationPreference>
       </uap:VisualElements>
     </Application>
   </Applications>
@@ -27,7 +31,6 @@
     <Capability Name="internetClientServer" />
     <uap3:Capability Name="userNotificationListener" />
     <uap6:Capability Name="graphicsCapture" />
-    <uap:Capability Name="enterpriseAuthentication" />
     <DeviceCapability Name="webcam" />
     <DeviceCapability Name="pointOfService" />
   </Capabilities>

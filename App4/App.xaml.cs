@@ -32,7 +32,7 @@ namespace App4
         /// </summary>
         public App()
         {
-            AppCenter.Start("346867b7-2f47-4fa8-8f3c-b1b16b121b5d", typeof(Analytics));
+
             this.InitializeComponent();
             this.Suspending += OnSuspending;
         }
