@@ -9,7 +9,7 @@
             <AcrylicBrush x:Key="NavigationViewDefaultPaneBackground"
         BackgroundSource="Backdrop" TintColor="YellowGreen" TintOpacity=".6"/>
             <AcrylicBrush x:Key="NavigationViewExpandedPaneBackground"
-        BackgroundSource="HostBackdrop" TintColor="Orange" TintOpacity=".8"/>
+        BackgroundSource="HostBackdrop" TintColor="#FFE3433B" TintOpacity=".8"/>
             <ResourceDictionary.MergedDictionaries>
 
                 <ResourceDictionary Source="/Styles/Styles.xaml"/>

@@ -17,6 +17,9 @@
     <Style x:Key="ComboTags" TargetType="ComboBox">
         <Setter Property="FontSize" Value="{ThemeResource SearchBoxTextBoxThemeMinHeight }"></Setter>
     </Style>
+    <Style x:Key="NavigationViewDefaultPaneBackgroundANVI" TargetType="NavigationView">
+        <Setter Property="Background" Value="AliceBlue" ></Setter>
+    </Style>
     <Style x:Key="SymbolButton" TargetType="ToggleButton">
         <Setter Property="Background" Value="{ThemeResource ToggleButtonBackgroundThemeBrush}"/>
         <Setter Property="Foreground" Value="{ThemeResource ToggleButtonForegroundThemeBrush}"/>

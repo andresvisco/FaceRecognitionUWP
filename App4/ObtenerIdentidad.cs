@@ -74,7 +74,8 @@ namespace App5
                 string subscriptionKey = localSettings.Values["apiKey"] as string;
                 string subscriptionEndpoint = "https://southcentralus.api.cognitive.microsoft.com/face/v1.0";
                 var faceServiceClient = new FaceServiceClient(subscriptionKey, subscriptionEndpoint);
-
+                
+                //var caraPersona = await faceServiceClient.GetPersonFaceAsync("1", )
                 try
                 {
 
@@ -82,7 +83,13 @@ namespace App5
                     // using (var fsStream = File.OpenRead(sampleFile))
                     // {
                     IEnumerable<FaceAttributeType> faceAttributes =
-            new FaceAttributeType[] { FaceAttributeType.Gender, FaceAttributeType.Age, FaceAttributeType.Smile, FaceAttributeType.Emotion, FaceAttributeType.Glasses, FaceAttributeType.Hair };
+            new FaceAttributeType[] {
+                FaceAttributeType.Gender,
+                FaceAttributeType.Age,
+                FaceAttributeType.Smile,
+                FaceAttributeType.Emotion,
+                FaceAttributeType.Glasses,
+                FaceAttributeType.Hair };
 
 
                     var faces = await faceServiceClient.DetectAsync(nuevoStreamFace, true, false, faceAttributes);

@@ -55,7 +55,7 @@ namespace App4
         private ScenarioState currentState;
         private readonly SolidColorBrush fillBrush = new SolidColorBrush(Windows.UI.Colors.Transparent);
         private readonly SolidColorBrush fillBrushText = new SolidColorBrush(Windows.UI.Colors.GreenYellow);
-        private readonly SolidColorBrush lineBrush = new SolidColorBrush(Windows.UI.Colors.Yellow);
+        private readonly SolidColorBrush lineBrush = new SolidColorBrush(Windows.UI.Colors.Red);
         private readonly double lineThickness = 2.0;
         private SemaphoreSlim frameProcessingSemaphore = new SemaphoreSlim(1);
         public string IdentidadEncontrada = "";
@@ -98,7 +98,7 @@ namespace App4
         private async void cambioConection(object sender)
         {
             bool conectividad = HayConectividad.Conectividad();
-            
+
             if (conectividad)
             {
                 await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () =>{
@@ -125,11 +125,12 @@ namespace App4
             localSettings.Values["valorIdGroup"] = "1";
             this.InitializeComponent();
             NetworkInformation.NetworkStatusChanged += cambioConection;
+            
 
             ObtenerVideoDevices();
 
-            
-            
+
+
 
             if (HayConectividad.Conectividad())
             {
@@ -170,15 +171,13 @@ namespace App4
 
         }
 
-        public List<Tuple<string, string>> listaCamaras = new List<Tuple<string, string>>();
+        public List<Tuple<string, string>> listaCamaras;
         private async void ObtenerVideoDevices()
         {
-            DeviceInformationCollection deviceInformation = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
-            foreach (var item in deviceInformation)
-            {
-                listaCamaras.Add(new Tuple<string, string>(item.Name, item.Id));
-            }
-
+          
+            var camaras = await Camaras.ObtenerCamaras();
+            listaCamaras = camaras.ToList<Tuple<string,string>>();
+            lstBoxCamaras.ItemsSource = camaras;
 
         }
 

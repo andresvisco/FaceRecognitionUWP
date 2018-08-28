@@ -8,7 +8,7 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    
+
     <Grid>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
@@ -23,7 +23,7 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        
+
         <NavigationView Grid.Column="0"
                         IsSettingsVisible="True" 
                         x:Name="navView"
@@ -33,8 +33,6 @@
                         IsPaneOpen="True"
                         PaneTitle="Face Recognition"
                         
-                        
-
                         >
             <NavigationView.HeaderTemplate>
                 <DataTemplate>
@@ -43,25 +41,12 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <!--
-                        <TextBlock Style="{StaticResource TitleTextBlockStyle}"
-                           FontSize="28"
-                           VerticalAlignment="Center"
-                           Text="Bienvenido" x:Name="txtHeaderTemplate"/>
-                        <CommandBar Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Top"
-                            DefaultLabelPosition="Right"
-                            Background="{ThemeResource SystemControlBackgroundAltHighBrush}">
-                            <AppBarButton Label="Refresh" Icon="Refresh"/>
-                            <AppBarButton Label="Import" Icon="Import"/>
-                        </CommandBar>
-                        -->
+
                     </Grid>
                 </DataTemplate>
             </NavigationView.HeaderTemplate>
             <NavigationView.MenuItems>
-              
+
                 <NavigationViewItem x:Uid="HomeNavItem" Content="Home" Tag="home">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE10F;"/>
@@ -71,8 +56,8 @@
                 <NavigationViewItemHeader Content="Face API"/>
                 <NavigationViewItem x:Uid="AppsNavItem" Icon="Video" Content="Reconocimiento" Tag="reconocimiento" />
                 <NavigationViewItem x:Uid="GamesNavItem" Icon="AllApps" Content="Altas" Tag="altas"/>
-                
-                
+
+
             </NavigationView.MenuItems>
             <Frame x:Name="ContentFrame" Grid.Column="1" Margin="24,0,0,0" Width="900" VerticalAlignment="Top" HorizontalAlignment="Left">
                 <Frame.ContentTransitions>
@@ -82,6 +67,6 @@
                 </Frame.ContentTransitions>
             </Frame>
         </NavigationView>
-        
+
     </Grid>
 </Page>
