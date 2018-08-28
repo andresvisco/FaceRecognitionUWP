@@ -38,7 +38,7 @@ namespace App5
     Windows.Storage.ApplicationData.Current.LocalSettings;
             Windows.Storage.StorageFolder localFolder =
                 Windows.Storage.ApplicationData.Current.LocalFolder;
-            localSettings.Values["apiKey"] = "[tu clave face api]";
+            localSettings.Values["apiKey"] = "5ff19b57095a4d10bf64274ed9e6ef30";
             localSettings.Values["apiKeyCV"] = "[tu clave custom vision]";
             localSettings.Values["PredictionKey"] = "[tu clave custom vision prediction]";
 

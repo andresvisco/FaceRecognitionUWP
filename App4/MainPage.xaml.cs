@@ -28,6 +28,8 @@ using Windows.Storage;
 using Windows.Networking.Connectivity;
 using Windows.ApplicationModel;
 using Microsoft.AppCenter.Analytics;
+using Windows.Media.Devices;
+using Windows.Devices.Enumeration;
 
 namespace App4
 {
@@ -35,6 +37,8 @@ namespace App4
 
     public sealed partial class MainPage : Page
     {
+        public static SoftwareBitmapSource imageSourceCW = new SoftwareBitmapSource();
+
         Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
         Windows.Storage.StorageFolder localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
 
@@ -44,7 +48,8 @@ namespace App4
         private ThreadPoolTimer frameProcessingTimer;
         const BitmapPixelFormat InputPixelFormat = BitmapPixelFormat.Bgra8;
         public InMemoryRandomAccessStream ms;
-
+        public string SeleccionCamara = string.Empty;
+        public string SeleccionCamaraID = string.Empty;
         IList<DetectedFace> faces = null;
         private FaceTracker faceTracker;
         private ScenarioState currentState;
@@ -115,18 +120,16 @@ namespace App4
         }
         public MainPage()
         {
-
+            
             ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             localSettings.Values["valorIdGroup"] = "1";
             this.InitializeComponent();
             NetworkInformation.NetworkStatusChanged += cambioConection;
 
+            ObtenerVideoDevices();
 
-            //var statusWWMA = NetworkInterface.GetAllNetworkInterfaces();
-            //foreach (var item in statusWWMA)
-            //{
-            //    var interfaceNetwork = item.Description;
-            //}
+            
+            
 
             if (HayConectividad.Conectividad())
             {
@@ -166,9 +169,18 @@ namespace App4
 
 
         }
-     
+
+        public List<Tuple<string, string>> listaCamaras = new List<Tuple<string, string>>();
+        private async void ObtenerVideoDevices()
+        {
+            DeviceInformationCollection deviceInformation = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
+            foreach (var item in deviceInformation)
+            {
+                listaCamaras.Add(new Tuple<string, string>(item.Name, item.Id));
+            }
 
 
+        }
 
         public async void apagarCamara(object sender, LeavingBackgroundEventArgs e)
         {
@@ -178,7 +190,7 @@ namespace App4
         #endregion Constructor
 
 
-        public string GroupId
+        public static string GroupId
         {
             get
             {
@@ -205,6 +217,7 @@ namespace App4
             }
             else
             {
+
                 //this.rootPage.NotifyUser(string.Empty, NotifyType.StatusMessage);
                 this.ChangeScenarioState(ScenarioState.Streaming);
                 btnIniciarStream.Content = "Parar Streamming";
@@ -219,18 +232,30 @@ namespace App4
                 ChangeScenarioState(ScenarioState.Idle);
             });
         }
+        
         private async Task<bool> StartWebcamStreaming()
         {
+            var seleccioncamara = SeleccionCamaraID;
+            
+
             bool successful = true;
             try
             {
-
+                var camara = lstBoxCamaras.SelectedIndex;
+                
                 this.mediaCapture = new MediaCapture();
                 MediaCaptureInitializationSettings settings = new MediaCaptureInitializationSettings();
                 settings.StreamingCaptureMode = StreamingCaptureMode.Video;
+                
+                settings.VideoDeviceId = SeleccionCamaraID;
+                
+
+
+
                 await mediaCapture.InitializeAsync(settings);
                 this.mediaCapture.Failed += this.MediaCapture_CameraStreamFailed;
 
+                
                 var deviceController = mediaCapture.VideoDeviceController;
                 this.videoProperties = deviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview) as VideoEncodingProperties;
 
@@ -382,7 +407,10 @@ namespace App4
                             {
                                 if (IdentidadEncontrada == "")
                                 {
-                                    nombre = await ObtenerIdentidad(valor);
+                                    nombre = await App5.ObtenerIdentidad.ObtenerIdentidadAPI(valor, videoProperties, mediaCapture);
+
+                                  
+                                    
 
                                     if (nombre != "" )
                                     {
@@ -398,6 +426,12 @@ namespace App4
 
 
                             }
+                            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () =>
+                            {
+                                txtResult.Text = nombre;
+                                imagenCamaraWeb.Source = imageSourceCW;
+
+                            });
 
 
                         }
@@ -421,7 +455,7 @@ namespace App4
             }
             catch (Exception ex)
             {
-                var ignored = this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                var ignored = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                 {
                     txtResultServicio.Text = ex.Message.ToString();
                     //this.rootPage.NotifyUser(ex.ToString(), NotifyType.ErrorMessage);
@@ -466,171 +500,30 @@ namespace App4
                 this.Nombre= nombrePers;
             }
         }
-
-        public async Task<string> ObtenerIdentidad( VideoFrame videoFrame)
+        public async Task<byte[]> EncodedBytes(SoftwareBitmap soft, Guid encoderId)
         {
-            byte[] arrayImage;
-            var PersonName = "";
-            const BitmapPixelFormat InputPixelFormat1 = BitmapPixelFormat.Bgra8;
+            byte[] array = null;
 
-            videoFrame = new VideoFrame(InputPixelFormat, (int)this.videoProperties.Width, (int)this.videoProperties.Height);
+            // First: Use an encoder to copy from SoftwareBitmap to an in-mem stream (FlushAsync)
+            // Next:  Use ReadAsync on the in-mem stream to get byte[] array
 
-            try
+            using (ms = new InMemoryRandomAccessStream())
             {
-
-
-
-                var valor = await mediaCapture.GetPreviewFrameAsync(videoFrame);
-
-                SoftwareBitmap softwareBitmapPreviewFrame = valor.SoftwareBitmap;
-
-                Size sizeCrop = new Size(softwareBitmapPreviewFrame.PixelWidth, softwareBitmapPreviewFrame.PixelHeight);
-                Point point = new Point(0, 0);
-                Rect rect = new Rect(0, 0, softwareBitmapPreviewFrame.PixelWidth, softwareBitmapPreviewFrame.PixelHeight);
-                var arrayByteData = await EncodedBytes(softwareBitmapPreviewFrame, BitmapEncoder.BmpEncoderId);
-
-                SoftwareBitmap softwareBitmapCropped = await CreateFromBitmap(softwareBitmapPreviewFrame, (uint)softwareBitmapPreviewFrame.PixelWidth, (uint)softwareBitmapPreviewFrame.PixelHeight);
-                SoftwareBitmap displayableImage = SoftwareBitmap.Convert(softwareBitmapCropped, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
-                //SoftwareBitmap displayableImageGray = SoftwareBitmap.Convert(softwareBitmapCropped, BitmapPixelFormat.Gray16);
-
-
-                //await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, async () => 
-                //{
-                //    var source = new SoftwareBitmapSource();
-                //    await source.SetBitmapAsync(displayableImageGray);
-                //    imagenCamaraWeb.Source = source;
-
-                //});
-                
-
-                arrayImage = await EncodedBytes(displayableImage, BitmapEncoder.BmpEncoderId);
-
-                var nuevoStreamFace = new MemoryStream(arrayImage);
-
-
-                string subscriptionKey = localSettings.Values["apiKey"] as string;
-                string subscriptionEndpoint = "https://southcentralus.api.cognitive.microsoft.com/face/v1.0";
-                var faceServiceClient = new FaceServiceClient(subscriptionKey, subscriptionEndpoint);
+                BitmapEncoder encoder = await BitmapEncoder.CreateAsync(encoderId, ms);
+                encoder.SetSoftwareBitmap(soft);
 
                 try
                 {
-
-
-                    // using (var fsStream = File.OpenRead(sampleFile))
-                    // {
-                    IEnumerable<FaceAttributeType> faceAttributes =
-            new FaceAttributeType[] { FaceAttributeType.Gender, FaceAttributeType.Age, FaceAttributeType.Smile, FaceAttributeType.Emotion, FaceAttributeType.Glasses, FaceAttributeType.Hair };
-
-
-                    var faces = await faceServiceClient.DetectAsync(nuevoStreamFace,true,false,faceAttributes);
-
-                    string edad=string.Empty;
-                    string genero = string.Empty;
-                    string emocion = string.Empty;
-                        
-                    var resultadoIdentifiacion = await faceServiceClient.IdentifyAsync(faces.Select(ff => ff.FaceId).ToArray(), largePersonGroupId: this.GroupId);
-
-                    var ignored2 = this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                    {
-                        try
-                        {
-                            var ignored5 = this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                            {
-                                var Status = faces.Length.ToString();
-                                txtResultServicio.Text = "Caras encontradas: " + Status.ToString();
-                            });
-
-                        }
-                        catch (Exception ex)
-                        {
-                            var ignored5 = this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                            {
-                                txtResultServicio.Text = "Error 1: " + ex.Message.ToString();
-
-                            });
-                            throw;
-
-                        }
-
-                    });
-                        
-
-                    for (int idx = 0; idx < faces.Length; idx++)
-                    {
-                        // Update identification result for rendering
-                        edad = faces[idx].FaceAttributes.Age.ToString();
-                        genero = faces[idx].FaceAttributes.Gender.ToString();
-
-                        if (genero != string.Empty)
-                        {
-                            if (genero == "male")
-                            {
-                                genero = "Masculino";
-                            }
-                            else
-                            {
-                                genero = "Femenino";
-                            }
-                        }
-                            
-
-
-                        var res = resultadoIdentifiacion[idx];
-
-                        if (res.Candidates.Length > 0)
-                        {
-                            var nombrePersona = await faceServiceClient.GetPersonInLargePersonGroupAsync(GroupId, res.Candidates[0].PersonId);
-                            PersonName = nombrePersona.Name.ToString();
-                            //var estadoAnimo = 
-                            var ignored3 = this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                            {
-                                txtResult.Text = nombrePersona.Name.ToString() + " / " + genero.ToString() + " / " + edad.ToString();
-
-
-                                previewFoto.Source = softwareBitmapSource;
-
-                            });
-                        }
-                        else
-                        {
-                            txtResult.Text = "Unknown";
-                        }
-                    }
-                    //}
-
+                    await encoder.FlushAsync();
                 }
-                catch (FaceAPIException ex)
-                {
-                    var error = ex.Message.ToString();
-                    var ignored3 = this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                    {
-                        txtResultServicio.Text = "Error 2: "+ error;
-                    });
-                }
-                
-            }
-            catch (Exception ex)
-            {
-                var mensaje = ex.Message.ToString();
-                var ignored4 = this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                {
-                    txtResultServicio.Text = "Error 3: " + mensaje;
-                });
-            }
-            return PersonName;
+                catch (Exception ex) { return new byte[0]; }
 
+                array = new byte[ms.Size];
+                await ms.ReadAsync(array.AsBuffer(), (uint)ms.Size, InputStreamOptions.None);
+            }
+            return array;
         }
-
-        //public static IRandomAccessStream ConvertToRandomAccessStream(MemoryStream memoryStream)
-        //{
-        //    var randomAccessStream = new InMemoryRandomAccessStream();
-        //    var outputStream = randomAccessStream.GetOutputStreamAt(0);
-        //    var dw = new DataWriter(outputStream);
-        //    var task = Task.Factory.StartNew(() => dw.WriteBytes(memoryStream.ToArray()));
-        //     dw.StoreAsync();
-        //     outputStream.FlushAsync();
-        //    return randomAccessStream;
-        //}
+       
         public MediaElement MediaElementThread = new MediaElement();
         public async Task<SoftwareBitmap> AsBitmapImage(byte[] byteArray)
         {
@@ -671,6 +564,9 @@ namespace App4
             Idle,
             Streaming
         }
+        public ImageBrush imageBrush = new ImageBrush();
+        public ImageSource imageSource = new BitmapImage(new Uri("ms-appx:///Assets/unicornio.png"));
+        public Image imageUnic = new Image();
         private void SetupVisualization(Windows.Foundation.Size framePizelSize, IList<DetectedFace> foundFaces)
         {
             this.VisualizationCanvas.Children.Clear();
@@ -680,32 +576,52 @@ namespace App4
             double actualWidth = this.VisualizationCanvas.ActualWidth;
             double actualHeight = this.VisualizationCanvas.ActualHeight;
 
+            
+            TextBlock texto = new TextBlock();
+
             if (this.currentState == ScenarioState.Streaming && foundFaces != null && actualWidth != 0 && actualHeight != 0)
             {
                 double widthScale = framePizelSize.Width / actualWidth;
                 double heightScale = framePizelSize.Height / actualHeight;
+                Rectangle box = new Rectangle();
+
+
 
                 int i = 0;
                 foreach (DetectedFace face in foundFaces)
                 {
+                    //if (IdentidadEncontrada != "Andy Visco" && IdentidadEncontrada != "Catalina")
+                    //{
 
-                    Rectangle box = new Rectangle();
-
-                    box.Width = (int)face.FaceBox.Width / (int)widthScale;
-                    box.Height = (int)(face.FaceBox.Height / heightScale);
-                    box.Fill = this.fillBrush;
-                    box.Stroke = this.lineBrush;
-                    box.StrokeThickness = this.lineThickness;
-                    box.Margin = new Thickness((uint)(face.FaceBox.X / widthScale), (uint)(face.FaceBox.Y / heightScale), 0, 0);
-                    this.VisualizationCanvas.Children.Add(box);
-
-                    TextBlock texto = new TextBlock();
-                    texto.Text = IdentidadEncontrada;
-                    texto.Margin = new Thickness((uint)(face.FaceBox.X / widthScale), (uint)(face.FaceBox.Y / heightScale) - 15, 0, 0);
-                    texto.Foreground = this.lineBrush;
-                    this.VisualizationCanvas.Children.Add(texto);
+                        box.Width = (int)face.FaceBox.Width / (int)widthScale;
+                        box.Height = (int)(face.FaceBox.Height / heightScale);
+                        box.Fill = this.fillBrush;
+                        box.Stroke = this.lineBrush;
+                        box.StrokeThickness = this.lineThickness;
+                        box.Margin = new Thickness((uint)(face.FaceBox.X / widthScale), (uint)(face.FaceBox.Y / heightScale), 0, 0);
 
 
+                        texto.Text = IdentidadEncontrada;
+                        texto.Margin = new Thickness((uint)(face.FaceBox.X / widthScale), (uint)(face.FaceBox.Y / heightScale) - 15, 0, 0);
+                        texto.Foreground = this.lineBrush;
+                        this.VisualizationCanvas.Children.Add(box);
+
+                        this.VisualizationCanvas.Children.Add(texto);
+
+                    //}
+                    //else
+                    //{
+
+
+                        //imageBrush.ImageSource = imageSource;
+                        //imageUnic.Source = imageSource;
+                        //imageUnic.Margin = new Thickness((uint)(face.FaceBox.X / widthScale), (uint)(face.FaceBox.Y / heightScale), 0, 0);
+
+
+                        //imageUnic.Width = ((int)face.FaceBox.Width / (int)widthScale)*1.15;
+                        //imageUnic.Height = ((int)face.FaceBox.Height / heightScale)*1.15;
+                        //this.VisualizationCanvas.Children.Add(imageUnic);
+                    //}                    
                 }
 
             }
@@ -767,7 +683,7 @@ namespace App4
 
 
 
-        private async Task<SoftwareBitmap> CreateFromBitmap(SoftwareBitmap softwareBitmap, uint width, uint heigth)
+        public static async Task<SoftwareBitmap> CreateFromBitmap(SoftwareBitmap softwareBitmap, uint width, uint heigth)
         {
             using (InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream())
             {
@@ -793,29 +709,7 @@ namespace App4
                 return await decoder.GetSoftwareBitmapAsync(softwareBitmap.BitmapPixelFormat, softwareBitmap.BitmapAlphaMode);
             }
         }
-        private async Task<byte[]> EncodedBytes(SoftwareBitmap soft, Guid encoderId)
-        {
-            byte[] array = null;
-
-            // First: Use an encoder to copy from SoftwareBitmap to an in-mem stream (FlushAsync)
-            // Next:  Use ReadAsync on the in-mem stream to get byte[] array
-
-            using (ms = new InMemoryRandomAccessStream())
-            {
-                BitmapEncoder encoder = await BitmapEncoder.CreateAsync(encoderId, ms);
-                encoder.SetSoftwareBitmap(soft);
-
-                try
-                {
-                    await encoder.FlushAsync();
-                }
-                catch (Exception ex) { return new byte[0]; }
-
-                array = new byte[ms.Size];
-                await ms.ReadAsync(array.AsBuffer(), (uint)ms.Size, InputStreamOptions.None);
-            }
-            return array;
-        }
+        
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -862,6 +756,18 @@ namespace App4
             ShutdownWebCam();
             this.Frame.Navigate(typeof(MainPageVideoSource));
         }
+        
 
+        private void lstBoxCamaras_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            SeleccionCamara = ((Windows.UI.Xaml.Controls.Primitives.Selector)sender).SelectedItem.ToString();
+            SeleccionCamaraID = ((System.Tuple<string, string>)((Windows.UI.Xaml.Controls.Primitives.Selector)sender).SelectedItem).Item2.ToString();
+            ChangeScenarioState(ScenarioState.Idle);
+            ChangeScenarioState(ScenarioState.Streaming);
+
+
+
+
+        }
     }
 }
