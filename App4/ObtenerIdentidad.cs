@@ -41,7 +41,6 @@ namespace App5
         {
             byte[] arrayImage;
             var PersonName = "";
-            const BitmapPixelFormat InputPixelFormat1 = BitmapPixelFormat.Bgra8;
 
             videoFrame = new VideoFrame(InputPixelFormat, (int)videoProperties.Width, (int)videoProperties.Height);
 

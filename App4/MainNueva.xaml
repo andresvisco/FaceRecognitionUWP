@@ -10,19 +10,7 @@
 
 
     <Grid>
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup>
-                <VisualState>
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="{x:Bind navView.CompactModeThresholdWidth}" />
-                    </VisualState.StateTriggers>
-
-                    <VisualState.Setters>
-                        <Setter Target="navView.PaneDisplayMode" Value="Top"/>
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
+       
 
         <NavigationView Grid.Column="0"
                         IsSettingsVisible="True" 

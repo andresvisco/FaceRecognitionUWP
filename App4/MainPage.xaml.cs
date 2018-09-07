@@ -1,5 +1,4 @@
 ﻿using Windows.UI.Xaml.Controls;
-using Microsoft.ProjectOxford.Face;
 using Windows.Media;
 using Windows.Graphics.Imaging;
 using Windows.Media.MediaProperties;
@@ -9,7 +8,6 @@ using System;
 using Windows.System.Threading;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.Storage.Streams;
-using Windows.Foundation;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.IO;
 using System.Linq;
@@ -28,8 +26,7 @@ using Windows.Storage;
 using Windows.Networking.Connectivity;
 using Windows.ApplicationModel;
 using Microsoft.AppCenter.Analytics;
-using Windows.Media.Devices;
-using Windows.Devices.Enumeration;
+
 
 namespace App4
 {
@@ -589,8 +586,8 @@ namespace App4
                 int i = 0;
                 foreach (DetectedFace face in foundFaces)
                 {
-                    //if (IdentidadEncontrada != "Andy Visco" && IdentidadEncontrada != "Catalina")
-                    //{
+                    if (IdentidadEncontrada != "Catalina" && IdentidadEncontrada != "Rochy")
+                    {
 
                         box.Width = (int)face.FaceBox.Width / (int)widthScale;
                         box.Height = (int)(face.FaceBox.Height / heightScale);
@@ -607,20 +604,20 @@ namespace App4
 
                         this.VisualizationCanvas.Children.Add(texto);
 
-                    //}
-                    //else
-                    //{
+                    }
+                    else
+                    {
 
 
-                        //imageBrush.ImageSource = imageSource;
-                        //imageUnic.Source = imageSource;
-                        //imageUnic.Margin = new Thickness((uint)(face.FaceBox.X / widthScale), (uint)(face.FaceBox.Y / heightScale), 0, 0);
+                        imageBrush.ImageSource = imageSource;
+                        imageUnic.Source = imageSource;
+                        imageUnic.Margin = new Thickness((uint)(face.FaceBox.X / widthScale), (uint)(face.FaceBox.Y / heightScale), 0, 0);
 
 
-                        //imageUnic.Width = ((int)face.FaceBox.Width / (int)widthScale)*1.15;
-                        //imageUnic.Height = ((int)face.FaceBox.Height / heightScale)*1.15;
-                        //this.VisualizationCanvas.Children.Add(imageUnic);
-                    //}                    
+                        imageUnic.Width = ((int)face.FaceBox.Width / (int)widthScale) * 1.15;
+                        imageUnic.Height = ((int)face.FaceBox.Height / heightScale) * 1.15;
+                        this.VisualizationCanvas.Children.Add(imageUnic);
+                    }                    
                 }
 
             }
