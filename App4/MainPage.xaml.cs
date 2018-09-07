@@ -411,11 +411,23 @@ namespace App4
                                     if (nombre != "" )
                                     {
                                         IdentidadEncontrada = nombre;
+                                        await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+                                        {
+                                            txtIdentificando.Visibility = Visibility.Collapsed;
+                                            RectIdentificando.Visibility = Visibility.Collapsed;
+                                        });
+                                        
                                         AgregarCaraALista(IdentidadEncontrada);
                                     }
                                     else
                                     {
                                         nombre = "No se encontro identidad";
+                                        await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+                                        {
+                                            IdentidadEncontrada = string.Empty;
+                                            txtIdentificando.Visibility = Visibility.Visible;
+                                            RectIdentificando.Visibility = Visibility.Visible;
+                                        });
                                     }
                                     
                                 }                         
@@ -426,13 +438,13 @@ namespace App4
                             {
                                 txtResult.Text = nombre;
                                 imagenCamaraWeb.Source = imageSourceCW;
-
                             });
 
 
                         }
                         else
                         {
+                           
                             string nombre = string.Empty;
                             int contador = 0;
                             IdentidadEncontrada = string.Empty;
