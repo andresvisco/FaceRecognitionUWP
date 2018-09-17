@@ -496,12 +496,12 @@ namespace App4
                     Size sizeCrop = new Size(softwareBitmapPreviewFrame.PixelWidth, softwareBitmapPreviewFrame.PixelHeight);
                     Point point = new Point(0, 0);
                     Rect rect = new Rect(0, 0, softwareBitmapPreviewFrame.PixelWidth, softwareBitmapPreviewFrame.PixelHeight);
-                    var arrayByteData = await EncodedBytes(softwareBitmapPreviewFrame, BitmapEncoder.BmpEncoderId);
+                    var arrayByteData = await EncodedBytes(softwareBitmapPreviewFrame, BitmapEncoder.JpegEncoderId);
 
                     SoftwareBitmap softwareBitmapCropped = await CreateFromBitmap(softwareBitmapPreviewFrame, (uint)softwareBitmapPreviewFrame.PixelWidth, (uint)softwareBitmapPreviewFrame.PixelHeight);
                     SoftwareBitmap displayableImage = SoftwareBitmap.Convert(softwareBitmapCropped, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
 
-                    arrayImage = await EncodedBytes(displayableImage, BitmapEncoder.BmpEncoderId);
+                    arrayImage = await EncodedBytes(displayableImage, BitmapEncoder.JpegEncoderId);
                     var nuevoStreamFace = new MemoryStream(arrayImage);
 
 

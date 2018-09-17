@@ -55,7 +55,7 @@ namespace App5
                 Size sizeCrop = new Size(softwareBitmapPreviewFrame.PixelWidth, softwareBitmapPreviewFrame.PixelHeight);
                 Point point = new Point(0, 0);
                 Rect rect = new Rect(0, 0, softwareBitmapPreviewFrame.PixelWidth, softwareBitmapPreviewFrame.PixelHeight);
-                var arrayByteData = await EncodedBytesClass.EncodedBytes(softwareBitmapPreviewFrame, BitmapEncoder.BmpEncoderId);
+                var arrayByteData = await EncodedBytesClass.EncodedBytes(softwareBitmapPreviewFrame, BitmapEncoder.JpegEncoderId);
 
                 SoftwareBitmap softwareBitmapCropped = await MainPage.CreateFromBitmap(softwareBitmapPreviewFrame, (uint)softwareBitmapPreviewFrame.PixelWidth, (uint)softwareBitmapPreviewFrame.PixelHeight);
                 SoftwareBitmap displayableImage = SoftwareBitmap.Convert(softwareBitmapCropped, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
@@ -65,7 +65,7 @@ namespace App5
 
                 //await MainPage.imageSourceCW.SetBitmapAsync(displayableImage).AsTask();
 
-                arrayImage = await EncodedBytesClass.EncodedBytes(displayableImage, BitmapEncoder.BmpEncoderId);
+                arrayImage = await EncodedBytesClass.EncodedBytes(displayableImage, BitmapEncoder.JpegEncoderId);
 
                 var nuevoStreamFace = new MemoryStream(arrayImage);
 

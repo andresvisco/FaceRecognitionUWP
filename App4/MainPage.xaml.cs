@@ -647,7 +647,7 @@ namespace App4
             VideoFrame videoFrame = new VideoFrame(BitmapPixelFormat.Bgra8, (int)previewProperties.Width, (int)previewProperties.Height,BitmapAlphaMode.Premultiplied);
             VideoFrame previewFrame = await mediaCapture.GetPreviewFrameAsync(videoFrame);
             SoftwareBitmap previewBitmap = previewFrame.SoftwareBitmap;
-            var arrayByteData = await EncodedBytes(previewBitmap, BitmapEncoder.BmpEncoderId);
+            var arrayByteData = await EncodedBytes(previewBitmap, BitmapEncoder.JpegEncoderId);
 
             SoftwareBitmap softwareBitmapCropped = await CreateFromBitmap(previewBitmap, (uint)previewBitmap.PixelWidth, (uint)previewBitmap.PixelHeight);
 
@@ -655,7 +655,7 @@ namespace App4
 
             SoftwareBitmapSource softwareBitmapSourceFoto = new SoftwareBitmapSource();
             await softwareBitmapSource.SetBitmapAsync(softwareBitmapCropped);
-            var arrayCropped = await EncodedBytes(softwareBitmapCropped, BitmapEncoder.BmpEncoderId);
+            var arrayCropped = await EncodedBytes(softwareBitmapCropped, BitmapEncoder.JpegEncoderId);
 
 
 
